@@ -1,5 +1,5 @@
-import { assetInfoNotFoundMsg } from "../utility/message";
-import { assetInfoTemp } from "../utils";
+import { assetInfoNotFoundMsg, editAssetMsg } from "../utility/message";
+import { assetInfoTemp, sendMessage } from "../utils";
 import { BotContext } from "../models/session_data";
 import { AssetInfo } from "../models/asset_info";
 import { updateAssetInfoToSpreadsheet } from "../services/asset_info_service";
@@ -17,9 +17,7 @@ export const editHandler = async (
   ctx.session.editingAssetId = assetId;
   ctx.session.editStep = "waiting_for_field";
 
-  return ctx.reply(
-    `What do you want to edit for "${assetInfo.name}"?\n- renter\n- amount\n- category\n- note\n\nPlease type "done" when you're finished selecting`
-  );
+  return sendMessage(ctx, editAssetMsg(assetInfo));
 };
 
 export const saveAssetInfo = async (assetInfo: AssetInfo) => {

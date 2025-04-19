@@ -12,7 +12,7 @@ export const confirmOrEditInfoButton = (assetId: string) => [
     { text: "✅ Confirm", callback_data: `confirm_${assetId}` },
     { text: "📝 Edit", callback_data: `edit_${assetId}` },
   ],
-  [{ text: "✖️ Cancel", callback_data: `cancel_${assetId}` }],
+  [{ text: "❌ Cancel", callback_data: `cancel_${assetId}` }],
 ];
 
 export const getAllAssetNameButton = (data: AssetInfo[]) => {

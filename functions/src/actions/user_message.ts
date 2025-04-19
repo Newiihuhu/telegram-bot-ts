@@ -9,6 +9,7 @@ import {
   assetInfoNotFoundMsg,
   editAnotherFieldsOrTypeDoneMsg,
   defaultMsg,
+  editAssetToNewValueMsg,
 } from "../utility/message";
 import { saveAssetInfo } from "../handlers/edit_handler";
 
@@ -16,12 +17,12 @@ export function setupUserMessage(bot: Telegraf<BotContext>) {
   bot.on("message", async (ctx: BotContext) => {
     const session = ctx.session;
     if (!ctx.message || !("text" in ctx.message)) {
-      return ctx.reply("Please send a text message");
+      return ctx.reply("💬 Please send a text message");
     }
 
     const text = ctx.message.text.trim();
     if (!session.editingAssetId) {
-      return ctx.reply("No asset selected for editing");
+      return ctx.reply("💬 No asset selected for editing");
     }
     const assetInfo = assetInfoTemp.get(session.editingAssetId);
     if (!assetInfo) {
@@ -42,16 +43,20 @@ export function setupUserMessage(bot: Telegraf<BotContext>) {
 
     if (session.editStep === "waiting_for_field" && session.editingAssetId) {
       const field = text as keyof AssetInfo;
-      if (!["renter", "amount", "category", "note", "done"].includes(field)) {
+      if (
+        !["renter", "amount", "category", "note", "done"].includes(
+          field.toLowerCase()
+        )
+      ) {
         return ctx.reply(
-          'Please specify only renter, amount, category or note, or type "done" to finish editing'
+          "💬 Please specify only renter, amount, category or note, or type *done* to finish editing"
         );
       }
 
       session.fieldToEdit = field;
       session.editStep = "waiting_for_value";
 
-      return ctx.reply(`Please enter the new value for "${field}"`);
+      return ctx.reply(`💬 Please enter the new value for *"${field}"*`);
     }
 
     if (
@@ -61,7 +66,6 @@ export function setupUserMessage(bot: Telegraf<BotContext>) {
     ) {
       const newValue: string = text;
 
-      console.log("assetInfo:", typeof session.fieldToEdit);
       switch (session.fieldToEdit) {
         case "renter":
           assetInfo.renter = newValue;
@@ -77,9 +81,13 @@ export function setupUserMessage(bot: Telegraf<BotContext>) {
           break;
       }
       assetInfoTemp.set(session.editingAssetId, assetInfo);
+      console.log("assetInfo:", assetInfo);
       session.editStep = "waiting_for_field";
 
-      await sendMessage(ctx, `✅ edit ${session.fieldToEdit} to "${newValue}"`);
+      await sendMessage(
+        ctx,
+        editAssetToNewValueMsg(session.fieldToEdit, newValue)
+      );
       return sendMessage(ctx, editAnotherFieldsOrTypeDoneMsg);
     }
     return sendMessage(ctx, defaultMsg);
