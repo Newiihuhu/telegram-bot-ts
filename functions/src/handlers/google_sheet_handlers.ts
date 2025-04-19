@@ -1,7 +1,7 @@
 import { google, sheets_v4 } from "googleapis";
 
 const auth = new google.auth.GoogleAuth({
-  keyFile: "./credentials.json",
+  keyFile: "../credentials.json",
   scopes: ["https://www.googleapis.com/auth/spreadsheets"],
 });
 
@@ -10,7 +10,7 @@ async function getGoogleSheetClient(): Promise<sheets_v4.Sheets> {
   return google.sheets({ version: "v4", auth: client as any });
 }
 
-export async function writeToSpreadsheet(
+export async function insertDataToSpreadsheet(
   spreadsheetId: string,
   range: string,
   values: any[][]
@@ -21,6 +21,22 @@ export async function writeToSpreadsheet(
     range,
     valueInputOption: "USER_ENTERED",
     insertDataOption: "INSERT_ROWS",
+    requestBody: {
+      values,
+    },
+  });
+  return response.data;
+}
+export async function updateDataToSpreadsheet(
+  spreadsheetId: string,
+  range: string,
+  values: any[][]
+): Promise<sheets_v4.Schema$AppendValuesResponse> {
+  const sheets = await getGoogleSheetClient();
+  const response = await sheets.spreadsheets.values.update({
+    spreadsheetId,
+    range,
+    valueInputOption: "USER_ENTERED",
     requestBody: {
       values,
     },
@@ -39,25 +55,21 @@ export async function readFromSpreadsheet(
     spreadsheetId,
     range,
   });
-
-  if (columnName && filterValue && response.data.values) {
+  if (response.data.values) {
     // Find column index by name (assuming first row contains headers)
     const headers = response.data.values[0];
-    const columnIndex = headers.indexOf(columnName);
-
-    if (columnIndex !== -1) {
-      // Filter rows where the specified column matches the filter value
+    const assetsIdColumnIndex = headers.indexOf(columnName);
+    if (assetsIdColumnIndex !== -1) {
+      // Filter rows where the assets id column matches the filter value
       const filteredValues = response.data.values.filter((row, index) => {
         if (index === 0) return true; // Keep header row
-        return row[columnIndex] === filterValue;
+        return row[assetsIdColumnIndex] === filterValue;
       });
-
       return {
         ...response.data,
         values: filteredValues,
       };
     }
   }
-
   return response.data;
 }

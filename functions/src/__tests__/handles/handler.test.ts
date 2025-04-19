@@ -1,6 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
-import "../index";
-import { startHandler } from "../handlers/handles";
+import { startHandler } from "../../handlers/update_income_handler";
 
 describe("Start Command", () => {
   it("should reply with message when /start command is received", async () => {

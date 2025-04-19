@@ -1,20 +1,28 @@
 import { onRequest } from "firebase-functions/v2/https";
-import { Telegraf } from "telegraf";
+import { session, Telegraf } from "telegraf";
 import * as dotenv from "dotenv";
-import { setupCommands } from "./commands/start";
 import { setupActions } from "./actions/rent_update";
-import { testCommands } from "./commands/test";
+import { setupAllCommands } from "./commands/all_commands";
+import { BotContext } from "./models/session_data";
+import { setupUserMessage } from "./actions/user_message";
 dotenv.config();
 
-// ใช้ env หรือใส่ตรงนี้เลย (ไม่แนะนำใน production)
-const bot = new Telegraf(process.env.BOT_TOKEN!);
+const bot = new Telegraf<BotContext>(process.env.BOT_TOKEN_DEV!);
 
-setupCommands(bot);
-testCommands(bot);
+bot.use(session({ defaultSession: () => ({}) }));
+setupAllCommands(bot);
 setupActions(bot);
+setupUserMessage(bot);
 
 // Handler Firebase Functions
 export const telegramBot = onRequest(async (req, res) => {
-  await bot.handleUpdate(req.body);
-  res.status(200).send("OK");
+  bot
+    .handleUpdate(req.body, res)
+    .then(() => {
+      res.status(200).end();
+    })
+    .catch((err) => {
+      console.error("Error handling update", err);
+      res.status(500).end();
+    });
 });
