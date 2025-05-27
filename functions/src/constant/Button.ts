@@ -1,4 +1,4 @@
-import { AssetInfo } from "../models/asset_info";
+import { AssetInfo } from "../models/AssetInfo";
 
 export const updateNowOrLaterButton = (assetId: string) => [
   [
@@ -10,9 +10,8 @@ export const updateNowOrLaterButton = (assetId: string) => [
 export const confirmOrEditInfoButton = (assetId: string) => [
   [
     { text: "✅ Confirm", callback_data: `confirm_${assetId}` },
-    { text: "📝 Edit", callback_data: `edit_${assetId}` },
+    { text: "❌ Cancel", callback_data: `cancel_${assetId}` },
   ],
-  [{ text: "❌ Cancel", callback_data: `cancel_${assetId}` }],
 ];
 
 export const getAllAssetNameButton = (data: AssetInfo[]) => {
