@@ -1,15 +1,7 @@
-import { google } from "googleapis";
-import {
-  insertDataToSpreadsheet,
-  readFromSpreadsheet,
-} from "../../data_source/GoogleSheetAPI";
-import { LogConstants } from "../../constant/Logs";
-
 // Create mock functions
 const mockAppend = jest.fn();
 const mockGet = jest.fn();
 
-// Mock the googleapis module
 jest.mock("googleapis", () => ({
   google: {
     auth: {
@@ -27,6 +19,12 @@ jest.mock("googleapis", () => ({
     }),
   },
 }));
+
+import {
+  insertDataToSpreadsheet,
+  readFromSpreadsheet,
+} from "../../data_source/GoogleSheetAPI";
+import { LogConstants } from "../../constant/Logs";
 
 describe("GoogleSheetAPI", () => {
   beforeEach(() => {

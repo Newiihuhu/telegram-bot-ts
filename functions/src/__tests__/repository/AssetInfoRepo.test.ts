@@ -9,7 +9,7 @@ import {
 } from "../../data_source/GoogleSheetAPI";
 import { AssetInfo } from "../../models/AssetInfo";
 
-jest.mock("../../data_source/google_sheet");
+jest.mock("../../data_source/GoogleSheetAPI");
 
 describe("AssetInfoRepo", () => {
   const mockDate = new Date("2025-04-30T10:00:00.000Z");

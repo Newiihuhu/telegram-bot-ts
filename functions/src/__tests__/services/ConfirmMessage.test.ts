@@ -10,7 +10,7 @@ import {
 import { saveIncomeToSpreadsheet } from "../../repository/AssetInfoRepo";
 import { assetInfoCache } from "../../models/AssetInfo";
 
-jest.mock("../../repository/asset_info");
+jest.mock("../../repository/AssetInfoRepo");
 
 describe("ConfirmMessage", () => {
   let mockBot: jest.Mocked<BotPlatform>;

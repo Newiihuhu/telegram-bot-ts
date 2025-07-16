@@ -17,10 +17,15 @@ export const AlertMessage = async (
   bot: BotPlatform
 ) => {
   try {
-    let assetId = "A01";
-    // const assetId = context.callbackData.split("alert_")[1];
+    
+    if (!("callbackData" in context)) {
+      await bot.sendMessage(context.chatId, invalidFormatMsg);
+      return;
+    }
+
+    const assetId = context.callbackData.split("alert_")[1];
     if (!assetId) {
-      // console.error(`Invalid callback data format: ${context.callbackData}`);
+      console.error(`Invalid callback data format: ${context.callbackData}`);
       await bot.sendMessage(context.chatId, invalidFormatMsg);
       return;
     }
